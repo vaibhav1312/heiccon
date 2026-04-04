@@ -1,0 +1,11 @@
+src/
+test/
+.github/
+vitest.config.ts
+tsup.config.ts
+tsconfig.json
+.gitignore
+coverage/
+*.test.ts
+PROJECT_PLAN.md
+ROADMAP.md

@@ -1,0 +1,172 @@
+{
+  "name": "heiccon",
+  "version": "0.0.0",
+  "description": "Convert HEIC/HEIF images to 14 formats — entirely in the browser. Zero server uploads, one convert() call.",
+  "keywords": [
+    "heic",
+    "heif",
+    "heic to jpg",
+    "heic to png",
+    "heic to webp",
+    "heic to avif",
+    "heic converter",
+    "heic conversion",
+    "image converter",
+    "client-side",
+    "browser",
+    "wasm",
+    "canvas"
+  ],
+  "license": "MIT",
+  "homepage": "https://heiccon.com",
+  "author": {
+    "name": "heiccon",
+    "url": "https://heiccon.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vaibhav1312/heiccon.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vaibhav1312/heiccon/issues"
+  },
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./decode": {
+      "types": "./dist/decode/index.d.ts",
+      "import": "./dist/decode/index.js",
+      "require": "./dist/decode/index.cjs"
+    },
+    "./encode": {
+      "types": "./dist/encode/index.d.ts",
+      "import": "./dist/encode/index.js",
+      "require": "./dist/encode/index.cjs"
+    },
+    "./encode/jpg": {
+      "types": "./dist/encode/jpg.d.ts",
+      "import": "./dist/encode/jpg.js",
+      "require": "./dist/encode/jpg.cjs"
+    },
+    "./encode/png": {
+      "types": "./dist/encode/png.d.ts",
+      "import": "./dist/encode/png.js",
+      "require": "./dist/encode/png.cjs"
+    },
+    "./encode/webp": {
+      "types": "./dist/encode/webp.d.ts",
+      "import": "./dist/encode/webp.js",
+      "require": "./dist/encode/webp.cjs"
+    },
+    "./encode/avif": {
+      "types": "./dist/encode/avif.d.ts",
+      "import": "./dist/encode/avif.js",
+      "require": "./dist/encode/avif.cjs"
+    },
+    "./encode/gif": {
+      "types": "./dist/encode/gif.d.ts",
+      "import": "./dist/encode/gif.js",
+      "require": "./dist/encode/gif.cjs"
+    },
+    "./encode/bmp": {
+      "types": "./dist/encode/bmp.d.ts",
+      "import": "./dist/encode/bmp.js",
+      "require": "./dist/encode/bmp.cjs"
+    },
+    "./encode/tiff": {
+      "types": "./dist/encode/tiff.d.ts",
+      "import": "./dist/encode/tiff.js",
+      "require": "./dist/encode/tiff.cjs"
+    },
+    "./encode/psd": {
+      "types": "./dist/encode/psd.d.ts",
+      "import": "./dist/encode/psd.js",
+      "require": "./dist/encode/psd.cjs"
+    },
+    "./encode/tga": {
+      "types": "./dist/encode/tga.d.ts",
+      "import": "./dist/encode/tga.js",
+      "require": "./dist/encode/tga.cjs"
+    },
+    "./encode/ppm": {
+      "types": "./dist/encode/ppm.d.ts",
+      "import": "./dist/encode/ppm.js",
+      "require": "./dist/encode/ppm.cjs"
+    },
+    "./encode/ico": {
+      "types": "./dist/encode/ico.d.ts",
+      "import": "./dist/encode/ico.js",
+      "require": "./dist/encode/ico.cjs"
+    },
+    "./transform": {
+      "types": "./dist/transform/index.d.ts",
+      "import": "./dist/transform/index.js",
+      "require": "./dist/transform/index.cjs"
+    },
+    "./pipeline": {
+      "types": "./dist/pipeline/index.d.ts",
+      "import": "./dist/pipeline/index.js",
+      "require": "./dist/pipeline/index.cjs"
+    },
+    "./compression": {
+      "types": "./dist/compression/index.d.ts",
+      "import": "./dist/compression/index.js",
+      "require": "./dist/compression/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md",
+    "CONTRIBUTING.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "tsc --noEmit",
+    "prepublishOnly": "npm run build",
+    "size": "size-limit"
+  },
+  "dependencies": {
+    "heic-to": "^1.4.2"
+  },
+  "devDependencies": {
+    "@size-limit/preset-small-lib": "^11.2.0",
+    "@vitest/coverage-v8": "^3.2.4",
+    "size-limit": "^11.2.0",
+    "tsup": "^8.4.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
+  },
+  "size-limit": [
+    {
+      "path": "dist/decode/index.js",
+      "limit": "6 kB"
+    },
+    {
+      "path": "dist/encode/jpg.js",
+      "limit": "1 kB"
+    },
+    {
+      "path": "dist/encode/index.js",
+      "limit": "3 kB"
+    },
+    {
+      "path": "dist/index.js",
+      "limit": "15 kB"
+    }
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

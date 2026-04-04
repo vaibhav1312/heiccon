@@ -1,0 +1,31 @@
+import { defineConfig } from 'tsup';
+
+export default defineConfig({
+  entry: {
+    index: 'src/index.ts',
+    'decode/index': 'src/decode/index.ts',
+    'encode/index': 'src/encode/index.ts',
+    'encode/jpg': 'src/encode/jpg.ts',
+    'encode/png': 'src/encode/png.ts',
+    'encode/webp': 'src/encode/webp.ts',
+    'encode/avif': 'src/encode/avif.ts',
+    'encode/gif': 'src/encode/gif.ts',
+    'encode/bmp': 'src/encode/bmp.ts',
+    'encode/tiff': 'src/encode/tiff.ts',
+    'encode/psd': 'src/encode/psd.ts',
+    'encode/tga': 'src/encode/tga.ts',
+    'encode/ppm': 'src/encode/ppm.ts',
+    'encode/ico': 'src/encode/ico.ts',
+    'transform/index': 'src/transform/index.ts',
+    'pipeline/index': 'src/pipeline/index.ts',
+    'compression/index': 'src/compression/index.ts',
+  },
+  format: ['esm', 'cjs'],
+  dts: true,
+  sourcemap: true,
+  clean: true,
+  splitting: true,
+  treeshake: true,
+  minify: false,
+  outDir: 'dist',
+});
