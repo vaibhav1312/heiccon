@@ -1,6 +1,6 @@
 {
   "name": "heiccon",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Convert HEIC/HEIF images to 14 formats — entirely in the browser. Zero server uploads, one convert() call.",
   "keywords": [
     "heic",
