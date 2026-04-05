@@ -1,6 +1,8 @@
 import type { FormatMeta, EncodeOptions } from '../types.js';
 
-import { EncodeError } from '../errors.js';
+import { GIFEncoder, quantize, applyPalette } from 'gifenc';
+
+import { normalizeQuality } from '../compression/normalize.js';
 
 export const meta: FormatMeta = {
   key: 'gif',
@@ -19,14 +21,33 @@ export const meta: FormatMeta = {
 
 /**
  * Encode a Canvas to GIF using gifenc.
- * Phase 2 implementation — gifenc must be installed.
+ * Quality 0-100 controls palette size (2-256 colors).
  */
 export async function encode(
-  _canvas: HTMLCanvasElement | OffscreenCanvas,
-  _options?: EncodeOptions,
+  canvas: HTMLCanvasElement | OffscreenCanvas,
+  options?: EncodeOptions,
 ): Promise<Blob> {
-  throw new EncodeError(
-    'MISSING_DEPENDENCY',
-    'GIF encoder requires gifenc. Install it: npm install gifenc. Available in v0.2.0.',
-  );
+  const w = canvas.width;
+  const h = canvas.height;
+
+  const ctx = canvas.getContext('2d') as
+    | CanvasRenderingContext2D
+    | OffscreenCanvasRenderingContext2D;
+
+  if (!ctx) throw new Error('Failed to get 2D context for GIF encoding');
+
+  const imageData = ctx.getImageData(0, 0, w, h);
+  const rgba = imageData.data;
+
+  // normalizeQuality returns maxColors (2-256) for GIF
+  const maxColors = normalizeQuality('gif', options?.quality ?? meta.defaultQuality!) as number;
+
+  const palette = quantize(rgba, maxColors);
+  const index = applyPalette(rgba, palette);
+
+  const gif = GIFEncoder();
+  gif.writeFrame(index, w, h, { palette });
+  gif.finish();
+
+  return new Blob([gif.bytes().buffer as ArrayBuffer], { type: meta.mime });
 }

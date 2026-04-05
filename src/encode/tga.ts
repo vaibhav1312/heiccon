@@ -1,6 +1,6 @@
 import type { FormatMeta, EncodeOptions } from '../types.js';
 
-import { EncodeError } from '../errors.js';
+import { encodeTga } from '@lunapaint/tga-codec';
 
 export const meta: FormatMeta = {
   key: 'tga',
@@ -19,14 +19,27 @@ export const meta: FormatMeta = {
 
 /**
  * Encode a Canvas to TGA using @lunapaint/tga-codec.
- * Phase 2 implementation.
+ * Produces 32-bit RGBA TGA.
  */
 export async function encode(
-  _canvas: HTMLCanvasElement | OffscreenCanvas,
+  canvas: HTMLCanvasElement | OffscreenCanvas,
   _options?: EncodeOptions,
 ): Promise<Blob> {
-  throw new EncodeError(
-    'MISSING_DEPENDENCY',
-    'TGA encoder requires @lunapaint/tga-codec. Install it: npm install @lunapaint/tga-codec. Available in v0.2.0.',
-  );
+  const w = canvas.width;
+  const h = canvas.height;
+
+  const ctx = canvas.getContext('2d') as
+    | CanvasRenderingContext2D
+    | OffscreenCanvasRenderingContext2D;
+
+  if (!ctx) throw new Error('Failed to get 2D context for TGA encoding');
+
+  const imageData = ctx.getImageData(0, 0, w, h);
+
+  // tga-codec expects { data: Uint8Array, width, height }
+  const rgba = new Uint8Array(imageData.data.buffer, imageData.data.byteOffset, imageData.data.byteLength);
+
+  const result = await encodeTga({ data: rgba, width: w, height: h });
+
+  return new Blob([result.data.buffer as ArrayBuffer], { type: meta.mime });
 }

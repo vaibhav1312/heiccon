@@ -1,6 +1,6 @@
 import type { FormatMeta, EncodeOptions } from '../types.js';
 
-import { EncodeError } from '../errors.js';
+import UTIF from 'utif2';
 
 export const meta: FormatMeta = {
   key: 'tiff',
@@ -18,15 +18,30 @@ export const meta: FormatMeta = {
 };
 
 /**
- * Encode a Canvas to TIFF using UTIF.js.
- * Phase 2 implementation — utif must be installed.
+ * Encode a Canvas to TIFF using utif2.
+ * Produces an uncompressed RGBA TIFF.
  */
 export async function encode(
-  _canvas: HTMLCanvasElement | OffscreenCanvas,
+  canvas: HTMLCanvasElement | OffscreenCanvas,
   _options?: EncodeOptions,
 ): Promise<Blob> {
-  throw new EncodeError(
-    'MISSING_DEPENDENCY',
-    'TIFF encoder requires utif. Install it: npm install utif. Available in v0.2.0.',
+  const w = canvas.width;
+  const h = canvas.height;
+
+  const ctx = canvas.getContext('2d') as
+    | CanvasRenderingContext2D
+    | OffscreenCanvasRenderingContext2D;
+
+  if (!ctx) throw new Error('Failed to get 2D context for TIFF encoding');
+
+  const imageData = ctx.getImageData(0, 0, w, h);
+  // utif2.encodeImage expects ArrayBuffer of RGBA data
+  const rgbaBuffer = imageData.data.buffer.slice(
+    imageData.data.byteOffset,
+    imageData.data.byteOffset + imageData.data.byteLength,
   );
+
+  const tiffBuffer = UTIF.encodeImage(rgbaBuffer as unknown as Uint8Array, w, h);
+
+  return new Blob([tiffBuffer], { type: meta.mime });
 }

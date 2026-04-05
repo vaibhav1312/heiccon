@@ -106,42 +106,67 @@ describe('encoder meta (static imports)', () => {
   });
 });
 
-// ─── Stub encoders throw MISSING_DEPENDENCY ──────────────────
+// ─── Phase 2 encoder meta (all formats now implemented) ──────
 
-describe('Phase 2 stub encoders', () => {
-  it('gif encode() throws MISSING_DEPENDENCY', async () => {
-    const mod = await import('../../src/encode/gif.js');
-    await expect(mod.encode(null as any)).rejects.toThrow(EncodeError);
-    await expect(mod.encode(null as any)).rejects.toMatchObject({ code: 'MISSING_DEPENDENCY' });
+describe('Phase 2 encoder meta', () => {
+  it('tiff meta has correct fields', async () => {
+    const { meta } = await import('../../src/encode/tiff.js');
+    expect(meta.key).toBe('tiff');
+    expect(meta.aliases).toEqual(['tif']);
+    expect(meta.mime).toBe('image/tiff');
+    expect(meta.ext).toBe('tiff');
+    expect(meta.supportsCompression).toBe(false);
+    expect(meta.compressionType).toBe('none');
+    expect(meta.supportsTransparency).toBe(false);
+    expect(meta.requiresAlphaCompositing).toBe(true);
   });
 
-  it('bmp encode() throws MISSING_DEPENDENCY', async () => {
-    const mod = await import('../../src/encode/bmp.js');
-    await expect(mod.encode(null as any)).rejects.toThrow(EncodeError);
-    await expect(mod.encode(null as any)).rejects.toMatchObject({ code: 'MISSING_DEPENDENCY' });
+  it('psd meta has correct fields', async () => {
+    const { meta } = await import('../../src/encode/psd.js');
+    expect(meta.key).toBe('psd');
+    expect(meta.mime).toBe('application/psd');
+    expect(meta.ext).toBe('psd');
+    expect(meta.supportsCompression).toBe(false);
+    expect(meta.compressionType).toBe('none');
   });
 
-  it('tiff encode() throws MISSING_DEPENDENCY', async () => {
-    const mod = await import('../../src/encode/tiff.js');
-    await expect(mod.encode(null as any)).rejects.toThrow(EncodeError);
-    await expect(mod.encode(null as any)).rejects.toMatchObject({ code: 'MISSING_DEPENDENCY' });
+  it('tga meta has correct fields', async () => {
+    const { meta } = await import('../../src/encode/tga.js');
+    expect(meta.key).toBe('tga');
+    expect(meta.mime).toBe('image/x-tga');
+    expect(meta.ext).toBe('tga');
+    expect(meta.supportsCompression).toBe(false);
+    expect(meta.supportsTransparency).toBe(true);
   });
 
-  it('psd encode() throws MISSING_DEPENDENCY', async () => {
-    const mod = await import('../../src/encode/psd.js');
-    await expect(mod.encode(null as any)).rejects.toThrow(EncodeError);
-    await expect(mod.encode(null as any)).rejects.toMatchObject({ code: 'MISSING_DEPENDENCY' });
+  it('ico meta has correct fields', async () => {
+    const { meta } = await import('../../src/encode/ico.js');
+    expect(meta.key).toBe('ico');
+    expect(meta.mime).toBe('image/x-icon');
+    expect(meta.ext).toBe('ico');
+    expect(meta.supportsCompression).toBe(false);
+    expect(meta.supportsTransparency).toBe(true);
   });
 
-  it('tga encode() throws MISSING_DEPENDENCY', async () => {
-    const mod = await import('../../src/encode/tga.js');
-    await expect(mod.encode(null as any)).rejects.toThrow(EncodeError);
-    await expect(mod.encode(null as any)).rejects.toMatchObject({ code: 'MISSING_DEPENDENCY' });
+  it('avif meta has correct fields', async () => {
+    const { meta } = await import('../../src/encode/avif.js');
+    expect(meta.key).toBe('avif');
+    expect(meta.mime).toBe('image/avif');
+    expect(meta.ext).toBe('avif');
+    expect(meta.supportsCompression).toBe(true);
+    expect(meta.compressionType).toBe('lossy');
+    expect(meta.defaultQuality).toBe(50);
+    expect(meta.supportsTransparency).toBe(true);
   });
 
-  it('ico encode() throws MISSING_DEPENDENCY', async () => {
-    const mod = await import('../../src/encode/ico.js');
-    await expect(mod.encode(null as any)).rejects.toThrow(EncodeError);
-    await expect(mod.encode(null as any)).rejects.toMatchObject({ code: 'MISSING_DEPENDENCY' });
+  it('all format encoders export encode function', async () => {
+    const formats = ['gif', 'bmp', 'tiff', 'psd', 'tga', 'ico', 'avif'];
+    for (const fmt of formats) {
+      const { getEncoder } = await import('../../src/encode/router.js');
+      const mod = await getEncoder(fmt);
+      expect(typeof mod.encode).toBe('function');
+      expect(mod.meta).toBeDefined();
+      expect(mod.meta.key).toBeDefined();
+    }
   });
 });

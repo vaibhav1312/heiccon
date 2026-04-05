@@ -1,6 +1,6 @@
 import type { FormatMeta, EncodeOptions } from '../types.js';
 
-import { EncodeError } from '../errors.js';
+import { writePsd } from 'ag-psd';
 
 export const meta: FormatMeta = {
   key: 'psd',
@@ -19,14 +19,44 @@ export const meta: FormatMeta = {
 
 /**
  * Encode a Canvas to PSD using ag-psd.
- * Phase 2 implementation — ag-psd must be installed.
+ * Produces a single-layer PSD with flattened composite image.
  */
 export async function encode(
-  _canvas: HTMLCanvasElement | OffscreenCanvas,
+  canvas: HTMLCanvasElement | OffscreenCanvas,
   _options?: EncodeOptions,
 ): Promise<Blob> {
-  throw new EncodeError(
-    'MISSING_DEPENDENCY',
-    'PSD encoder requires ag-psd. Install it: npm install ag-psd. Available in v0.2.0.',
-  );
+  const w = canvas.width;
+  const h = canvas.height;
+
+  const ctx = canvas.getContext('2d') as
+    | CanvasRenderingContext2D
+    | OffscreenCanvasRenderingContext2D;
+
+  if (!ctx) throw new Error('Failed to get 2D context for PSD encoding');
+
+  const imageData = ctx.getImageData(0, 0, w, h);
+
+  const pixelData = {
+    data: imageData.data,
+    width: w,
+    height: h,
+  };
+
+  const psd = {
+    width: w,
+    height: h,
+    imageData: pixelData,
+    children: [
+      {
+        name: 'Layer 1',
+        imageData: pixelData,
+        top: 0,
+        left: 0,
+      },
+    ],
+  };
+
+  const arrayBuffer = writePsd(psd);
+
+  return new Blob([arrayBuffer], { type: meta.mime });
 }
